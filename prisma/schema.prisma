@@ -1,0 +1,148 @@
+// Prisma Schema para Sistema de Gestión de Clínica Médica
+// Base de Datos: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+// ============================================
+// Modelo: User (Usuarios del sistema)
+// ============================================
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  image     String?   @map("image")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  doctor    Doctor?
+  citas     Cita[]
+
+  @@map("users")
+}
+
+// ============================================
+// Modelo: Paciente
+// ============================================
+model Paciente {
+  id                  Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(100)
+  apellidos           String    @db.VarChar(100)
+  ci                  String    @unique @db.VarChar(100)
+  numSeguro           String?   @unique @db.VarChar(100) @map("num_seguro")
+  fechaNacimiento     String    @db.VarChar(100) @map("fecha_nacimiento")
+  genero              String    @db.VarChar(10)
+  celular             String    @db.VarChar(20)
+  correo              String    @db.VarChar(100)
+  direccion           String    @db.VarChar(255)
+  grupoSanguineo      String    @db.VarChar(255) @map("grupo_sanguineo")
+  alergias            String    @db.VarChar(255)
+  contactoEmergencia  String    @db.VarChar(255) @map("contacto_emegencia")
+  observaciones       String    @db.VarChar(255)
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  citas               Cita[]
+
+  @@map("pacientes")
+}
+
+// ============================================
+// Modelo: Doctor
+// ============================================
+model Doctor {
+  id               Int       @id @default(autoincrement())
+  nombres          String
+  apellidos        String
+  telefono         String
+  licenciaMedica   String    @map("licencia_medica")
+  especialidad     String
+  userId           Int       @unique @map("user_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  horarios         Horario[]
+  citas            Cita[]
+
+  @@map("doctores")
+}
+
+// ============================================
+// Modelo: Consultorio
+// ============================================
+model Consultorio {
+  id           Int       @id @default(autoincrement())
+  nombre       String
+  ubicacion    String
+  capacidad    String
+  telefono     String?
+  especialidad String
+  estado       String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  horarios     Horario[]
+  citas        Cita[]
+
+  @@map("consultorios")
+}
+
+// ============================================
+// Modelo: Horario
+// ============================================
+model Horario {
+  id             Int          @id @default(autoincrement())
+  dia            String
+  horaInicio     String       @map("hora_inicio")
+  horaFin        String       @map("hora_fin")
+  doctorId       Int          @map("doctor_id")
+  consultorioId  Int          @map("consultorio_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  // Relaciones
+  doctor         Doctor       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  consultorio    Consultorio  @relation(fields: [consultorioId], references: [id], onDelete: Cascade)
+
+  @@map("horarios")
+}
+
+// ============================================
+// Modelo: Cita (Evento en Laravel)
+// ============================================
+model Cita {
+  id             Int          @id @default(autoincrement())
+  titulo         String       @db.VarChar(255)
+  inicio         DateTime
+  final          DateTime
+  color          String
+  userId         Int          @map("user_id")
+  doctorId       Int          @map("doctor_id")
+  consultorioId  Int          @map("consultorio_id")
+  pacienteId     Int?         @map("paciente_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  // Relaciones
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  doctor         Doctor       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  consultorio    Consultorio  @relation(fields: [consultorioId], references: [id], onDelete: Cascade)
+  paciente       Paciente?    @relation(fields: [pacienteId], references: [id], onDelete: SetNull)
+
+  @@map("eventos")
+}
