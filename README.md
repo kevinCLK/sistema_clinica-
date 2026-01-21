@@ -133,10 +133,20 @@ npx shadcn@latest add form
 npx shadcn@latest add calendar
 ```
 
+
+## 🔑 Credenciales de Prueba (Demo)
+
+Para probar el sistema, asegúrate de haber ejecutado el seed (`npm run seed`).
+
+**👨‍⚕️ Doctor (Acceso Admin/Doctor):**
+- **Usuario:** `dr.vargas@clinica.com`
+- **Contraseña:** `doctor123`
+
+**👤 Paciente (Acceso Limitado):**
+- **Usuario:** `paciente1@email.com`
+- **Contraseña:** `doctor123`
+
 ## 📄 Licencia
 
 MIT
 
----
-
-Creado con ❤️ usando Next.js y TypeScript
