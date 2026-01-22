@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState } from "react"
 import dynamic from "next/dynamic"
 import { CitasTable } from "./citas-table"
 import { Button } from "@/components/ui/button"
 import { LayoutList, Calendar as CalendarIcon } from "lucide-react"
 
-const CalendarView = dynamic(() => import("./calendar-view").then(mod => ({ default: mod.CalendarView })), {
+const CalendarView = dynamic(() => import("./calendar-view"), {
     ssr: false,
     loading: () => <div className="p-4">Cargando calendario...</div>
 })
