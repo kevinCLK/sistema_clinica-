@@ -1,6 +1,6 @@
 "use server"
 
-import { signIn } from "@/auth"
+import { signIn } from "next-auth/react"
 import { AuthError } from "next-auth"
 import prisma from "@/lib/prisma"
 import { hash } from "bcryptjs"
