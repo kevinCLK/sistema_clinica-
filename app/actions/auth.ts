@@ -1,22 +1,28 @@
 "use server"
 
-import { signIn } from "next-auth/react"
 import { AuthError } from "next-auth"
 import prisma from "@/lib/prisma"
-import { hash } from "bcryptjs"
+import { hash, compare } from "bcryptjs"
 
 export async function loginAction(email: string, password: string) {
     try {
-        await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
+        // Verificar credenciales manualmente
+        const user = await prisma.user.findUnique({
+            where: { email }
         })
-        return { success: true }
-    } catch (error) {
-        if (error instanceof AuthError) {
+
+        if (!user) {
             return { success: false, error: "Credenciales inválidas" }
         }
+
+        const isValid = await compare(password, user.password)
+        if (!isValid) {
+            return { success: false, error: "Credenciales inválidas" }
+        }
+
+        return { success: true, user }
+    } catch (error) {
+        console.error("Login error:", error)
         return { success: false, error: "Error al iniciar sesión" }
     }
 }
@@ -36,7 +42,7 @@ export async function registerAction(name: string, email: string, password: stri
         const hashedPassword = await hash(password, 10)
 
         // Crear el usuario
-        await prisma.user.create({
+        const user = await prisma.user.create({
             data: {
                 name,
                 email,
@@ -44,14 +50,7 @@ export async function registerAction(name: string, email: string, password: stri
             }
         })
 
-        // Auto-login después del registro
-        await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        })
-
-        return { success: true }
+        return { success: true, user }
     } catch (error) {
         console.error("Registration error:", error)
         return { success: false, error: "Error al registrar usuario" }

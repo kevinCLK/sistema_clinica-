@@ -1,3 +1,3 @@
-import NextAuth from "@/auth"
+import { GET, POST } from "@/auth"
 
-export default NextAuth
+export { GET, POST }
