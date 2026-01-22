@@ -1,4 +1,5 @@
-import { auth } from "@/auth"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -12,7 +13,7 @@ import { SpecialtyBarChart } from "@/components/dashboard/charts/specialty-bar-c
 import { Users, Stethoscope, Calendar, Building2, TrendingUp } from "lucide-react"
 
 export default async function DashboardPage() {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
     if (!session || !session.user) {
         redirect("/login")
