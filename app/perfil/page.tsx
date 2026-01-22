@@ -1,4 +1,5 @@
-import { auth } from "@/auth"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProfileForm } from "@/components/profile/profile-form"
@@ -9,7 +10,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
 export default async function PerfilPage() {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
     if (!session || !session.user) {
         redirect("/login")

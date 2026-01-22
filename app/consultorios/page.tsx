@@ -1,4 +1,5 @@
-import { auth } from "@/auth"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/app-layout"
@@ -7,7 +8,7 @@ import { getConsultorios } from "@/app/actions/consultorios"
 import { Building2 } from "lucide-react"
 
 export default async function ConsultoriosPage() {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
     if (!session) {
         redirect("/login")

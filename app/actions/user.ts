@@ -1,6 +1,7 @@
 "use server"
 
-import { auth } from "@/auth"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/auth"
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import bcrypt from "bcryptjs"
@@ -22,7 +23,7 @@ const changePasswordSchema = z.object({
 })
 
 export async function updateProfile(data: z.infer<typeof updateProfileSchema>) {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
     if (!session || !session.user || !session.user.email) {
         return { success: false, message: "No autorizado" }
     }
@@ -52,7 +53,7 @@ export async function updateProfile(data: z.infer<typeof updateProfileSchema>) {
 }
 
 export async function changePassword(data: z.infer<typeof changePasswordSchema>) {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
     if (!session || !session.user || !session.user.email) {
         return { success: false, message: "No autorizado" }
     }
