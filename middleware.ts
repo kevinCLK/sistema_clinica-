@@ -1,40 +1,45 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 
 export async function middleware(request: NextRequest) {
-    // Evitar ejecutar middleware durante el build
-    if (process.env.NODE_ENV === 'production' && !request.headers.get('user-agent')) {
-        return NextResponse.next()
+    const token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET
+    })
+
+    const { pathname } = request.nextUrl
+
+    // 1. Si el usuario intenta acceder al login con sesión, redirigir al dashboard
+    if (pathname === "/login" && token) {
+        return NextResponse.redirect(new URL("/dashboard", request.url))
     }
 
-    try {
-        const session = await getServerSession(authOptions)
+    // 2. Rutas protegidas que requieren autenticación
+    const protectedRoutes = ["/dashboard", "/pacientes", "/doctores", "/citas", "/horarios", "/consultorios", "/perfil"]
+    const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
-        // Rutas protegidas que requieren autenticación
-        const protectedRoutes = ["/dashboard", "/pacientes", "/doctores", "/citas", "/horarios", "/consultorios"]
+    if (isProtectedRoute && !token) {
+        return NextResponse.redirect(new URL("/login", request.url))
+    }
 
-        const isProtectedRoute = protectedRoutes.some(route =>
-            request.nextUrl.pathname.startsWith(route)
-        )
+    // 3. Protección por Roles (RBAC)
+    if (token) {
+        const role = token.role as string
 
-        // Si intenta acceder a una ruta protegida sin sesión, redirigir al login
-        if (isProtectedRoute && !session) {
-            return NextResponse.redirect(new URL("/login", request.url))
-        }
-
-        // Si está logueado y intenta acceder al login, redirigir al dashboard
-        if (request.nextUrl.pathname === "/login" && session) {
+        // Doctores no pueden entrar a gestión de doctores o consultorios
+        const adminOnlyRoutes = ["/doctores", "/consultorios"]
+        if (adminOnlyRoutes.some(route => pathname.startsWith(route)) && role !== "ADMIN") {
             return NextResponse.redirect(new URL("/dashboard", request.url))
         }
 
-        return NextResponse.next()
-    } catch (error) {
-        // En caso de error durante el build o inicialización, continuar sin middleware
-        console.warn('Middleware error:', error)
-        return NextResponse.next()
+        // Pacientes no pueden entrar a la lista de otros pacientes ni gestión médica
+        if (pathname.startsWith("/pacientes") && role === "PATIENT") {
+            return NextResponse.redirect(new URL("/dashboard", request.url))
+        }
     }
+
+    return NextResponse.next()
 }
 
 export const config = {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PacienteForm } from "./paciente-form"
-import { deletePaciente } from "@/app/actions/pacientes"
+import { deletePaciente } from "@/actions/pacientes"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { exportToExcel, exportToPDF } from "@/lib/export-utils"
@@ -228,6 +228,15 @@ export function PacientesTable({ pacientes }: PacientesTableProps) {
                                         <TableCell>{edad} años</TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => router.push(`/pacientes/${paciente.id}`)}
+                                                    className="gap-1"
+                                                >
+                                                    <FileText className="h-4 w-4" />
+                                                    Expediente
+                                                </Button>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"

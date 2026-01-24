@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DoctorForm } from "./doctor-form"
-import { deleteDoctor } from "@/app/actions/doctores"
+import { deleteDoctor } from "@/actions/doctores"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { exportToExcel, exportToPDF } from "@/lib/export-utils"

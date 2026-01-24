@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/auth"
+import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/app-layout"
 import { DoctoresTable } from "@/components/doctores/doctores-table"
-import { getDoctores } from "@/app/actions/doctores"
+import { getDoctores } from "@/actions/doctores"
 import { Stethoscope } from "lucide-react"
 
 export default async function DoctoresPage() {

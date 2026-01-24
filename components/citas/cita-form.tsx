@@ -9,9 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { citaSchema, type CitaFormData } from "@/lib/validations/cita"
-import { createCita, updateCita, getPacientesForCitas } from "@/app/actions/citas"
-import { getDoctores } from "@/app/actions/doctores"
-import { getConsultorios } from "@/app/actions/consultorios"
+import { createCita, updateCita, getPacientesForCitas } from "@/actions/citas"
+import { getDoctores } from "@/actions/doctores"
+import { getConsultorios } from "@/actions/consultorios"
 
 interface CitaFormProps {
     open: boolean

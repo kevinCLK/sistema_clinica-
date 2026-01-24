@@ -20,7 +20,7 @@ vi.mock('sonner', () => ({
 }))
 
 // Mock de actions
-vi.mock('@/app/actions/pacientes', () => ({
+vi.mock('@/actions/pacientes', () => ({
   deletePaciente: vi.fn(),
 }))
 

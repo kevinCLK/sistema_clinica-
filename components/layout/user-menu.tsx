@@ -30,7 +30,8 @@ export function UserMenu({ user, variant = "default" }: UserMenuProps) {
     }, [])
 
     const handleSignOut = async () => {
-        await signOut({ callbackUrl: "/login" })
+        await signOut({ redirect: false })
+        window.location.href = "/login"
     }
 
     if (!mounted) {

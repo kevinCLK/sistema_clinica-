@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { changePassword } from "@/app/actions/user"
+import { changePassword } from "@/actions/user"
 
 const passwordSchema = z.object({
     currentPassword: z.string().min(1, "La contraseña actual es obligatoria"),

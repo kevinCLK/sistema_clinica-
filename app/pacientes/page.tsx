@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/auth"
+import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/app-layout"
 import { PacientesTable } from "@/components/pacientes/pacientes-table"
-import { getPacientes } from "@/app/actions/pacientes"
+import { getPacientes } from "@/actions/pacientes"
 import { Users } from "lucide-react"
 
 export default async function PacientesPage() {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createPaciente, updatePaciente, deletePaciente } from '@/app/actions/pacientes'
+import { createPaciente, updatePaciente, deletePaciente } from '@/actions/pacientes'
 import prisma from '@/lib/prisma'
 
 // Mock de Prisma

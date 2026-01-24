@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { updateProfile } from "@/app/actions/user"
+import { updateProfile } from "@/actions/user"
 import { useRouter } from "next/navigation"
 
 const profileSchema = z.object({

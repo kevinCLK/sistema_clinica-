@@ -1,16 +1,11 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/auth"
+import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/app-layout"
-import dynamic from "next/dynamic"
-import { getCitas } from "@/app/actions/citas"
+import { CitasClientWrapper } from "./citas-client-wrapper"
+import { getCitas } from "@/actions/citas"
 import { Calendar } from "lucide-react"
-
-const CitasPageClient = dynamic(() => import("@/components/citas/citas-page-client").then(mod => ({ default: mod.CitasPageClient })), {
-    ssr: false,
-    loading: () => <div className="p-4">Cargando...</div>
-})
 
 export default async function CitasPage() {
     const session = await getServerSession(authOptions)
@@ -38,7 +33,7 @@ export default async function CitasPage() {
 
                 <Card>
                     <CardContent className="pt-6">
-                        <CitasPageClient citas={citas} />
+                        <CitasClientWrapper citas={citas} />
                     </CardContent>
                 </Card>
             </div>

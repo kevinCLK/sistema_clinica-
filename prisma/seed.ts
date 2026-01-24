@@ -105,15 +105,28 @@ async function main() {
         }),
     ])
 
+    // Crear usuario Administrador
+    console.log('👤 Creando administrador...');
+    const hashedAdminPassword = await hash('admin123', 10);
+    await prisma.user.create({
+        data: {
+            name: 'Administrador del Sistema',
+            email: 'admin@clinica.com',
+            password: hashedAdminPassword,
+            role: 'ADMIN',
+        },
+    });
+
     // Crear usuarios para los doctores
     console.log('👨‍⚕️ Creando doctores...')
-    const hashedPassword = await hash('doctor123', 10)
+    const hashedDoctorPassword = await hash('doctor123', 10)
 
     const userDoctor1 = await prisma.user.create({
         data: {
             name: 'Dr. Roberto Vargas Méndez',
             email: 'dr.vargas@clinica.com',
-            password: hashedPassword,
+            password: hashedDoctorPassword,
+            role: 'DOCTOR',
         },
     })
 
@@ -121,7 +134,8 @@ async function main() {
         data: {
             name: 'Dra. Patricia Morales Cruz',
             email: 'dra.morales@clinica.com',
-            password: hashedPassword,
+            password: hashedDoctorPassword,
+            role: 'DOCTOR',
         },
     })
 
@@ -129,7 +143,8 @@ async function main() {
         data: {
             name: 'Dr. Miguel Ángel Ruiz',
             email: 'dr.ruiz@clinica.com',
-            password: hashedPassword,
+            password: hashedDoctorPassword,
+            role: 'DOCTOR',
         },
     })
 
@@ -218,21 +233,24 @@ async function main() {
             data: {
                 name: 'Juan Pérez González',
                 email: 'paciente1@email.com',
-                password: hashedPassword,
+                password: hashedDoctorPassword,
+                role: 'PATIENT',
             },
         }),
         prisma.user.create({
             data: {
                 name: 'María González López',
                 email: 'paciente2@email.com',
-                password: hashedPassword,
+                password: hashedDoctorPassword,
+                role: 'PATIENT',
             },
         }),
         prisma.user.create({
             data: {
                 name: 'Carlos Rodríguez Sánchez',
                 email: 'paciente3@email.com',
-                password: hashedPassword,
+                password: hashedDoctorPassword,
+                role: 'PATIENT',
             },
         }),
     ])

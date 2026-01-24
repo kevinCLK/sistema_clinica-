@@ -126,9 +126,25 @@ export async function deleteCita(id: number) {
     }
 }
 
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+
 export async function getCitas() {
     try {
+        const session = await getServerSession(authOptions)
+        if (!session) return []
+
+        const { id, role } = session.user
+        let whereClause = {}
+
+        if (role === "DOCTOR") {
+            whereClause = { doctor: { userId: parseInt(id) } }
+        } else if (role === "PATIENT") {
+            whereClause = { userId: parseInt(id) }
+        }
+
         const citas = await prisma.cita.findMany({
+            where: whereClause,
             include: {
                 user: {
                     select: { name: true, email: true },

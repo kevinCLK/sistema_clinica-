@@ -3,11 +3,11 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { loginAction } from "@/app/actions/auth"
 import { Stethoscope, Mail, Lock, AlertCircle, Loader2 } from "lucide-react"
 
 export default function LoginPage() {
@@ -22,13 +22,22 @@ export default function LoginPage() {
         setError("")
         setLoading(true)
 
-        const result = await loginAction(email, password)
+        try {
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            })
 
-        if (result.success) {
-            router.push("/dashboard")
-            router.refresh()
-        } else {
-            setError(result.error || "Error al iniciar sesión")
+            if (result?.error) {
+                setError("Credenciales inválidas")
+                setLoading(false)
+            } else if (result?.ok) {
+                router.push("/dashboard")
+                router.refresh()
+            }
+        } catch (error) {
+            setError("Error al iniciar sesión")
             setLoading(false)
         }
     }

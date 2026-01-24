@@ -10,8 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
+enum Role {
+  ADMIN
+  DOCTOR
+  RECEPTIONIST
+  PATIENT
+}
 
 // ============================================
 // Modelo: User (Usuarios del sistema)
@@ -22,6 +26,7 @@ model User {
   email     String    @unique
   password  String
   image     String?   @map("image")
+  role      Role      @default(ADMIN)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
@@ -55,8 +60,50 @@ model Paciente {
 
   // Relaciones
   citas               Cita[]
+  expediente          Expediente?
 
   @@map("pacientes")
+}
+
+// ============================================
+// Modelo: Expediente Clínico (Contenedor principal)
+// ============================================
+model Expediente {
+  id            Int         @id @default(autoincrement())
+  numero        String      @unique // Ej: EXP-001
+  pacienteId    Int         @unique @map("paciente_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  // Relaciones
+  paciente      Paciente    @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  consultas     Consulta[]
+
+  @@map("expedientes")
+}
+
+// ============================================
+// Modelo: Consulta (Cada atención médica)
+// ============================================
+model Consulta {
+  id              Int         @id @default(autoincrement())
+  motivo          String      @db.Text
+  diagnostico     String      @db.Text
+  tratamiento     String      @db.Text
+  notas           String?     @db.Text
+  fecha           DateTime    @default(now())
+  expedienteId    Int         @map("expediente_id")
+  doctorId        Int         @map("doctor_id")
+  citaId          Int?        @unique @map("cita_id")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relaciones
+  expediente      Expediente  @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+  doctor          Doctor      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  cita            Cita?       @relation(fields: [citaId], references: [id], onDelete: SetNull)
+
+  @@map("consultas")
 }
 
 // ============================================
@@ -74,9 +121,10 @@ model Doctor {
   updatedAt        DateTime  @updatedAt @map("updated_at")
 
   // Relaciones
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   horarios         Horario[]
   citas            Cita[]
+  consultas        Consulta[]
 
   @@map("doctores")
 }
@@ -143,6 +191,7 @@ model Cita {
   doctor         Doctor       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   consultorio    Consultorio  @relation(fields: [consultorioId], references: [id], onDelete: Cascade)
   paciente       Paciente?    @relation(fields: [pacienteId], references: [id], onDelete: SetNull)
+  consulta       Consulta?
 
   @@map("eventos")
 }

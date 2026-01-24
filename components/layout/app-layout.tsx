@@ -3,15 +3,16 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { 
-    LayoutDashboard, 
-    Users, 
-    Stethoscope, 
-    Calendar, 
+import {
+    LayoutDashboard,
+    Users,
+    Stethoscope,
+    Calendar,
     Building2,
     Menu,
     X,
-    ChevronRight
+    ChevronRight,
+    UserCog
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/ui/mode-toggle"
@@ -23,20 +24,22 @@ interface AppLayoutProps {
     user?: {
         name?: string | null
         email?: string | null
+        role?: string
     }
 }
-
-const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Pacientes", href: "/pacientes", icon: Users },
-    { name: "Doctores", href: "/doctores", icon: Stethoscope },
-    { name: "Consultorios", href: "/consultorios", icon: Building2 },
-    { name: "Citas", href: "/citas", icon: Calendar },
-]
 
 export function AppLayout({ children, user }: AppLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const pathname = usePathname()
+
+    const navigation = [
+        { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["ADMIN", "DOCTOR", "PATIENT"] },
+        { name: "Pacientes", href: "/pacientes", icon: Users, roles: ["ADMIN", "DOCTOR"] },
+        { name: "Doctores", href: "/doctores", icon: Stethoscope, roles: ["ADMIN"] },
+        { name: "Consultorios", href: "/consultorios", icon: Building2, roles: ["ADMIN"] },
+        { name: "Citas", href: "/citas", icon: Calendar, roles: ["ADMIN", "DOCTOR", "PATIENT"] },
+        { name: "Usuarios", href: "/usuarios", icon: UserCog, roles: ["ADMIN"] },
+    ].filter(item => !user?.role || item.roles.includes(user.role))
 
     return (
         <div className="min-h-screen bg-background">
@@ -58,10 +61,10 @@ export function AppLayout({ children, user }: AppLayoutProps) {
                     <nav className="flex flex-1 flex-col">
                         <ul role="list" className="flex flex-1 flex-col gap-y-1">
                             {navigation.map((item) => {
-                                const isActive = pathname === item.href || 
+                                const isActive = pathname === item.href ||
                                     (item.href !== "/dashboard" && pathname.startsWith(item.href))
                                 const Icon = item.icon
-                                
+
                                 return (
                                     <li key={item.name}>
                                         <Link
@@ -98,7 +101,7 @@ export function AppLayout({ children, user }: AppLayoutProps) {
             {/* Sidebar móvil */}
             {sidebarOpen && (
                 <>
-                    <div 
+                    <div
                         className="fixed inset-0 z-40 bg-black/50 lg:hidden"
                         onClick={() => setSidebarOpen(false)}
                     />
@@ -126,10 +129,10 @@ export function AppLayout({ children, user }: AppLayoutProps) {
                             <nav className="flex flex-1 flex-col">
                                 <ul role="list" className="flex flex-1 flex-col gap-y-1">
                                     {navigation.map((item) => {
-                                        const isActive = pathname === item.href || 
+                                        const isActive = pathname === item.href ||
                                             (item.href !== "/dashboard" && pathname.startsWith(item.href))
                                         const Icon = item.icon
-                                        
+
                                         return (
                                             <li key={item.name}>
                                                 <Link

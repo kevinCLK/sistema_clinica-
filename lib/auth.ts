@@ -2,7 +2,28 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { compare } from "bcryptjs"
 import prisma from "@/lib/prisma"
-import type { NextAuthOptions } from "next-auth"
+import type { NextAuthOptions, DefaultSession } from "next-auth"
+
+// Extender tipos de NextAuth
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      role: string
+    } & DefaultSession["user"]
+  }
+
+  interface User {
+    role: string
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string
+    role: string
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -29,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           image: user.image,
+          role: user.role,
         }
       },
     }),
@@ -43,22 +65,23 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.role = user.role
         token.picture = user.image
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
+        session.user.id = token.id
+        session.user.role = token.role
         session.user.image = token.picture as string
       }
-      return session
+      return session;
     },
   },
 }
 
 const handler = NextAuth(authOptions)
-export const { GET, POST } = handler
-export const auth = handler.auth
-export const signIn = handler.signIn
-export const signOut = handler.signOut
+
+export { handler as GET, handler as POST }
+export default handler

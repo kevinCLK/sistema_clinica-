@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { pacienteSchema, type PacienteFormData } from "@/lib/validations/paciente"
-import { createPaciente, updatePaciente } from "@/app/actions/pacientes"
+import { createPaciente, updatePaciente } from "@/actions/pacientes"
 import { toast } from "sonner"
 
 interface PacienteFormProps {

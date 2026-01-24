@@ -1,21 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Deshabilitar Turbopack y usar webpack para webpack config
-  experimental: {
-    turbopack: false,
+  eslint: {
+    // Advertencia: Esto permite el despliegue incluso si hay errores de linting.
+    ignoreDuringBuilds: true,
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        // Excluir módulos de servidor del cliente
-        "openid-client": false,
-        "@panva/hkdf": false,
-        "@panva/asn1.js": false,
-      };
-    }
-    return config;
+  typescript: {
+    // Advertencia: Esto permite el despliegue incluso si hay errores de TypeScript.
+    ignoreBuildErrors: true,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
 };
 

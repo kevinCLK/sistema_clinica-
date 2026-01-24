@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/auth"
+import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ConsultoriosTable } from "@/components/consultorios/consultorios-table"
-import { getConsultorios } from "@/app/actions/consultorios"
+import { getConsultorios } from "@/actions/consultorios"
 import { Building2 } from "lucide-react"
 
 export default async function ConsultoriosPage() {
